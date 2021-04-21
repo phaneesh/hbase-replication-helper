@@ -29,10 +29,17 @@ puts '-----------------------------------------------------'
 puts 'Enabling replication.....'
 tables.each { |t|
   puts "\tEnabling replication for table: #{t}"
-  tableDescriptor = @admin.getTableDescriptor(t)
+  tableDescriptor = @admin.getTableDescriptor(t.to_java_bytes)
   @admin.disableTable(t)
-  tableDescriptor.setValue('REPLICATION_SCOPE', 1)
+  tableDescriptor.setValue('REPLICATION_SCOPE', '1')
   tableDescriptor.setValue('KEEP_DELETED_CELLS', 'true')
+
+  columnDescriptors = tableDescriptor.getColumnFamilies()
+  columnDescriptors.each { |ts|
+    ts.setValue('REPLICATION_SCOPE', '1')
+    ts.setValue('KEEP_DELETED_CELLS', 'true')
+  }
+  
   @admin.modifyTable(t, tableDescriptor)
   @admin.enableTable(t)
   puts "\tEnabled replication for table: #{t}"
@@ -42,4 +49,3 @@ puts 'Done'
 puts '-----------------------------------------------------'
 
 exit 0
-

@@ -1,6 +1,7 @@
 # To execute script launch this command on shell: hbase shell snapshot-tables.rb
-@peer_culster_addr = "address of peer cluster"
+# Address of the peer cluster given in the format hbase.zookeeper.quorum:hbase.zookeeper.client.port:zookeeper.znode.parent
 
+@peer_culster_addr = "peer address"
 @snapshot_list = Array.new
 @copy_table_list = Array.new
 
@@ -8,6 +9,7 @@ include Java
 java_import org.apache.hadoop.hbase.HBaseConfiguration
 java_import org.apache.hadoop.hbase.client.HBaseAdmin
 
+java_import org.apache.hadoop.hbase.protobuf.generated.HBaseProtos::SnapshotDescription
 @conf = org.apache.hadoop.hbase.HBaseConfiguration.create
 
 @admin = org.apache.hadoop.hbase.client.HBaseAdmin.new(@conf)
@@ -36,7 +38,7 @@ def backup(table)
   cur_time = Time.now
   snapshot_name = "#{table}-SNAPSHOT-#{cur_time.strftime("%Y%m%d_%H%M%S")}"
   puts "\tCreating Snapshot: #{snapshot_name}"
-  @admin.snapshot(snapshot_name.to_java_bytes, table.to_java_bytes, HBaseProtos.SnapshotDescription.Type.FLUSH)
+  @admin.snapshot(snapshot_name.to_java_bytes, table.to_java_bytes, SnapshotDescription::Type::FLUSH)
   @snapshot_list << snapshot_name
   @copy_table_list << "sudo -u hbase hbase org.apache.hadoop.hbase.mapreduce.CopyTable -Dhbase.meta.replicas.use=true --starttime=#{cur_time.to_i * 1000} --peer.adr=#{@peer_culster_addr} #{table}"
 end
