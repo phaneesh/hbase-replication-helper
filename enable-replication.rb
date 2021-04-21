@@ -37,6 +37,7 @@ tables.each { |t|
   columnDescriptors = tableDescriptor.getColumnFamilies()
   columnDescriptors.each { |ts|
     ts.setValue('REPLICATION_SCOPE', '1')
+    ts.setValue('KEEP_DELETED_CELLS', 'true')
   }
   
   @admin.modifyTable(t, tableDescriptor)
