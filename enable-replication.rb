@@ -33,6 +33,12 @@ tables.each { |t|
   @admin.disableTable(t)
   tableDescriptor.setValue('REPLICATION_SCOPE', '1')
   tableDescriptor.setValue('KEEP_DELETED_CELLS', 'true')
+
+  columnDescriptors = tableDescriptor.getColumnFamilies()
+  columnDescriptors.each { |ts|
+    ts.setValue('REPLICATION_SCOPE', '1')
+  }
+  
   @admin.modifyTable(t, tableDescriptor)
   @admin.enableTable(t)
   puts "\tEnabled replication for table: #{t}"
