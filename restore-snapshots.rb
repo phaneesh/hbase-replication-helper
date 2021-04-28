@@ -18,8 +18,8 @@ puts snapshots
 puts '-----------------------------------------------------'
 puts 'Starting restore.....'
 snapshots.each { |s|
-  puts "\tRestoring Snapshot: #{s}"
-  @admin.restoreSnapshot(s)
+  puts "\tRestoring Snapshot: #{s.name}"
+  @admin.restoreSnapshot(s.name)
 }
 puts '-----------------------------------------------------'
 puts 'Done'
